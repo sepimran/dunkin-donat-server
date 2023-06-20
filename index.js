@@ -34,6 +34,35 @@ async function run() {
         // Send a ping to confirm a successful connection
 
         const foodCollection = client.db('foodDb').collection('food');
+        
+        app.get('/food/:id', async(req, res) =>{
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)};
+            const result = await foodCollection.findOne(query);
+            res.send(result);
+        })
+
+        app.put('/food/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = {_id: new ObjectId(id)};
+            const options = {upsert: true};
+            const updateFood = req.body;
+            const food = {
+                $set : {
+                    name: updateFood.name ,
+                    category: updateFood.category ,
+                    details: updateFood.details ,
+                    foodPhoto: updateFood.foodPhoto ,
+                    price: updateFood.price ,
+                    quantity: updateFood.quantity ,
+                    supplier: updateFood.supplier 
+                }
+            }
+            
+
+            const result = await foodCollection.updateOne(filter,food,options);
+            res.send(result);
+        })
 
         app.get('/foods', async(req, res)=>{
             const cursor = foodCollection.find();
@@ -56,6 +85,8 @@ async function run() {
             const result = await foodCollection.deleteOne(query);
             res.send(result);
         })
+
+       
 
 
 
