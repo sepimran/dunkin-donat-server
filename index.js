@@ -14,7 +14,7 @@ app.get('/', (req, res)=>{
 })
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.w3iaiou.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -47,6 +47,13 @@ async function run() {
 
             // send data to mongoDB database
             const result = await foodCollection.insertOne(newFood);
+            res.send(result);
+        })
+
+        app.delete('/food/:id', async(req, res)=>{
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)};
+            const result = await foodCollection.deleteOne(query);
             res.send(result);
         })
 
